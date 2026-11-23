@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Анкета пассажира пригородных поездов</title>
+<meta name="robots" content="noindex">
+<style>
+:root{
+  --bg:#f4f5f7; --card:#fff; --ink:#1c2230; --muted:#6a7284; --line:#e1e4ea;
+  --accent:#c8102e; --accent-ink:#fff; --soft:#fbe9ec; --ok:#1f8a4c; --warn:#b4470a;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12151b; --card:#1b1f27; --ink:#e8ebf1; --muted:#9aa2b3; --line:#2c3240;
+    --accent:#ff4d63; --accent-ink:#fff; --soft:#3a1d24; --ok:#4cc483; --warn:#f0a060;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 120px}
+header.top{display:flex;align-items:center;gap:10px;margin:4px 0 14px}
+header.top .mark{width:10px;height:28px;background:var(--accent);border-radius:3px}
+header.top h1{font-size:18px;margin:0;font-weight:650}
+.progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:6px}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.stepinfo{font-size:13px;color:var(--muted);margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 16px;margin-bottom:14px}
+h2{font-size:20px;margin:0 0 6px}
+.hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+.q{margin:18px 0 6px;font-weight:600}
+.q .req{color:var(--accent)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;user-select:none}
+.opt input{margin-top:3px;accent-color:var(--accent);width:18px;height:18px;flex:none}
+.opt:has(input:checked){border-color:var(--accent);background:var(--soft)}
+input[type=text],input[type=number],textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:480px){.row2{grid-template-columns:1fr}}
+.scale-legend{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:2px 0 8px}
+.rate{padding:12px 0;border-top:1px solid var(--line)}
+.rate:first-of-type{border-top:0}
+.rate .lbl{font-size:15px;margin-bottom:8px}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+.btns button{min-width:44px;height:44px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+.btns button.na{font-weight:400;font-size:13px;padding:0 10px}
+.btns button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.rate.err .lbl,.q.err{color:var(--warn)}
+.rank-list{display:flex;flex-direction:column;gap:8px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;user-select:none}
+.rank-item .n{flex:none;width:30px;height:30px;border-radius:50%;border:1px dashed var(--muted);display:grid;place-items:center;font-weight:700;color:var(--muted)}
+.rank-item.on{border-color:var(--accent);background:var(--soft)}
+.rank-item.on .n{background:var(--accent);color:var(--accent-ink);border:0}
+.linkbtn{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:6px 0;text-decoration:underline}
+.nps{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.nps button{height:44px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;font-weight:600;cursor:pointer;font:inherit}
+.nps button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.nps-legend{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+.sub{margin-left:8px;padding-left:12px;border-left:3px solid var(--line)}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.nav .in{max-width:720px;margin:0 auto;display:flex;gap:10px}
+.nav button{flex:1;height:50px;border-radius:12px;font:inherit;font-weight:650;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.nav button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.nav button:disabled{opacity:.5;cursor:default}
+.errbox{color:var(--warn);font-size:14px;margin-top:8px;min-height:1em}
+.hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+.done{text-align:center;padding:40px 16px}
+.done .big{font-size:44px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><span class="mark"></span><h1>Анкета пассажира пригородных поездов</h1></header>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="stepinfo" id="stepinfo"></div>
+  <main id="app"></main>
+</div>
+<div class="nav" id="nav"><div class="in">
+  <button id="back" type="button">Назад</button>
+  <button id="next" type="button" class="primary">Далее</button>
+</div></div>
+
+<script>
+/* ===== Конфигурация анкеты =====
+   Ключ ответа = номер столбца в листе «База оценок» (0 = столбец A).
+   Тексты вопросов и вариантов — как в базе 2026 г. */
+const ORG = 'АО «СЗППК»';
+const NA = 'не пользовался';
+
+const OPT = {
+  c11:['работа (в т.ч. командировка)','учеба','отдых/туризм','по личным целям','другое'],
+  c12:['более 3 раз в неделю','1-2 раза в неделю','чаще 1 раза в месяц','1 раз в месяц','1 раз в 3 месяца','1 раз в полгода','1 раз в год','реже 1 раза в год'],
+  c13:['женский','мужской'],
+  c14:['младше 18','18 – 24','25 – 34','35 – 44','45 – 54','55 – 65','старше 65'],
+  c15:['в кассе на вокзальном комплексе (остановочном пункте)','в терминале самообслуживания на вокзальном комплексе (остановочном пункте)','на сайте РЖД','на другом сайте','через мобильное приложение РЖД','через другое мобильное приложение','в агентстве','в поезде','другое'],
+  c88:['поиск необходимой информации о поездке и услугах','благодарность сотруднику компании (проводник/ начальник поезда/ сотрудник вокзала и т.д.)','жалоба (на качество оказания услуг, на работу сотрудника компании и т.д.)','предложение по улучшению работы компании','другое'],
+  c93:['Да, вопрос был решен','Нет, вопрос не был решен'],
+  c104:['существенно улучшилось','улучшилось','осталось на прежнем уровне','ухудшилось','серьезно ухудшилось'],
+  c7:['Стандарт','Ласточка'],
+};
+// Способ покупки → какой блок оценок показать (вопрос-развилка «офлайн/онлайн»)
+const OFFLINE = ['в кассе на вокзальном комплексе (остановочном пункте)','в агентстве'];
+const ONLINE  = ['в терминале самообслуживания на вокзальном комплексе (остановочном пункте)','на сайте РЖД','на другом сайте','через мобильное приложение РЖД','через другое мобильное приложение'];
+
+const R_OFFLINE = [[16,'Время ожидания в очереди в кассу'],[17,'Клиентоориентированность кассира (приветливость, готовность помочь)'],[18,'Доступность изложения кассиром информации о маршруте следования, наличии свободных мест, тарифах и условиях проезда'],[19,'Оформление абонементного билета/ пополнение транспортной карты',1],[20,'Возможность оформить билет на сложный маршрут с пересадками',1]];
+const R_ONLINE  = [[21,'Удобство поиска информации о маршруте следования, наличии свободных мест, тарифах и условиях проезда'],[22,'Быстрота оформления билета и оплаты'],[23,'Исправность работы (отсутствие сбоев и ошибок)'],[24,'Удобство оформления абонементного билета/ пополнения транспортной карты',1],[25,'Возможность оформить билет на сложный маршрут с пересадками',1]];
+const R_CAR = [[52,'Исправность работы оборудования'],[53,'Чистота'],[54,'Комфорт посадочного места'],[55,'Удобство и достаточность мест для размещения личных вещей и багажа'],[56,'Температурный режим'],[57,'Уровень шума'],[58,'Освещенность'],[59,'Понятность аудиальной информации (объявления)'],[60,'Чувство личной безопасности'],[61,'Уверенность в сохранности личных вещей'],[62,'Ассортимент услуг',1],[63,'Зарядка мобильных устройств',1],[64,'Санитарная комната (туалет)',1]];
+const R_SERV = [[72,'Питание на пассажирском месте (официальная разносная торговля)',1],[73,'Сопутствующие товары и сувениры, приобретенные у представителя перевозчика',1],[74,'Беспроводной доступ в интернет',1]];
+const R_STAFF = [[75,'Клиентоориентированность (приветливость/готовность помочь)',1]];
+const R_TRIP = [[76,'Удобство времени отправления'],[77,'Удобство времени прибытия'],[78,'Продолжительность поездки (время в пути)']];
+const R_COST = [[80,'Стоимость проезда'],[82,'Стоимость сопутствующих товаров и сувениров, приобретенных у представителя перевозчика',1]];
+const CHANNELS = [[83,'На сайте'],[84,'В мобильном приложении'],[85,'Онлайн-обращение в виртуальную приемную (форма обратной связи на сайте/ электронная почта)'],[86,'В ЦПК (Центр поддержки клиентов ОАО «РЖД»)'],[87,'Книга жалоб и предложений']];
+const R_CPK = [[89,'Клиентоориентированность персонала'],[90,'Компетентность сотрудников'],[91,'Оперативность ответа (время ожидания)'],[92,'Полезность полученной информации']];
+const RANK = [[95,'Расписание движения поездов и продолжительность поездки'],[96,'Безопасность'],[97,'Стоимость проезда и услуг'],[98,'Комфорт подвижного состава (комфорт в вагоне)'],[99,'Комфорт пребывания на вокзалах и остановочных пунктах'],[100,'Комплекс дополнительных услуг'],[101,'Доступность необходимой информации и легкость её получения при планировании поездки'],[102,'Простота оформления проездного документа'],[103,'Качество обслуживания и поддержки']];
+const CHANGE = [[105,'Расписание движения поездов'],[106,'Повысить уровень безопасности'],[107,'Снизить стоимость дополнительных услуг'],[108,'Повысить комфорт подвижного состава (комфорт в вагоне)'],[109,'Модернизировать инфраструктуру вокзалов/остановочных пунктов'],[110,'Расширить комплекс дополнительных услуг'],[111,'Улучшить информационные услуги и информационную поддержку'],[112,'Упростить процесс оформления проездного документа'],[113,'Повысить качество обслуживания и поддержки']];
+const STATIONS = ['Санкт-Петербург (Балтийский вокзал)','Санкт-Петербург (Витебский вокзал)','Санкт-Петербург (Ладожский вокзал)','Санкт-Петербург (Московский вокзал)','Санкт-Петербург (Финляндский вокзал)','Девяткино','Купчино','Рыбацкое','Обухово','Ланская','Удельная','Новая Деревня','Лигово','Колпино','Павловск','Пушкин (Детское Село)','Тосно','Любань','Малая Вишера','Великий Новгород','Чудово','Мга','Кириши','Волховстрой','Луга','Псков','Гатчина','Вырица','Сиверская','Новый Петергоф','Ораниенбаум','Ломоносов','Калище','Сосново','Приозерск','Сестрорецк','Зеленогорск','Выборг','Всеволожск','Ладожское Озеро','Петрозаводск','Тихвин','Будогощь','Назия','Металлострой','Понтонная','Татьянино'];
+
+/* ===== Состояние ===== */
+const KEY='szppk_anketa_v1';
+let A={}, appealed=null, rankOrder=[], step=0;
+const startedAt=Date.now();
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s){A=s.A||{};appealed=s.appealed??null;rankOrder=s.rankOrder||[];step=s.step||0;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({A,appealed,rankOrder,step}))}catch(e){}}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ticketBlock=()=>OFFLINE.includes(A[15])?R_OFFLINE:ONLINE.includes(A[15])?R_ONLINE:null;
+const is7000=()=>/^\s*7\d{3}/.test(A[5]||'');
+const channelsOn=()=>CHANNELS.filter(([c])=>A['ch'+c]);
+
+/* ===== Конструкторы UI ===== */
+function radios(col,title,opts,req=true){
+  return `<div class="q" data-q="${col}">${esc(title)}${req?' <span class="req">*</span>':''}</div><div class="opts">`+
+    opts.map(o=>`<label class="opt"><input type="radio" name="c${col}" value="${esc(o)}" ${A[col]===o?'checked':''}><span>${esc(o)}</span></label>`).join('')+`</div>`;
+}
+function rateGroup(items,legend=true){
+  return (legend?`<div class="scale-legend"><span>1 — полностью не удовлетворён</span><span>5 — полностью удовлетворён</span></div>`:'')+
+  items.map(([c,l,na])=>`<div class="rate" data-rate="${c}"><div class="lbl">${esc(l)}${na?'':' <span class="req" style="color:var(--accent)">*</span>'}</div><div class="btns">`+
+    [1,2,3,4,5].map(v=>`<button type="button" data-c="${c}" data-v="${v}" class="${A[c]===v?'on':''}">${v}</button>`).join('')+
+    (na?`<button type="button" class="na ${A[c]===NA?'on':''}" data-c="${c}" data-v="na">${NA}</button>`:'')+
+  `</div></div>`).join('');
+}
+
+/* ===== Шаги ===== */
+const STEPS=[
+ {t:'Здравствуйте!',render:()=>`<div class="card"><h2>Здравствуйте!</h2>
+   <p>${ORG} проводит исследование общественного мнения об услугах железнодорожного транспорта. Мы будем очень благодарны, если Вы уделите несколько минут и ответите на наши вопросы. Ваши ответы очень важны для улучшения качества обслуживания пассажиров.</p>
+   <p class="hint">Опрос анонимный и займёт около 7–10 минут. Вопросы, отмеченные <span style="color:var(--accent)">*</span>, обязательны.</p></div>`,
+  check:()=>true},
+
+ {t:'Ваша поездка',render:()=>`<div class="card"><h2>Ваша поездка</h2>
+   <div class="q" data-q="9">Маршрут поездки <span class="req">*</span></div>
+   <div class="row2"><input type="text" list="st" data-c="9" placeholder="Станция отправления" value="${esc(A[9]||'')}">
+   <input type="text" list="st" data-c="10" placeholder="Станция назначения" value="${esc(A[10]||'')}"></div>
+   <datalist id="st">${STATIONS.map(s=>`<option value="${esc(s)}">`).join('')}</datalist>
+   <div class="q">Номер поезда (если помните)</div>
+   <input type="text" inputmode="numeric" data-c="5" placeholder="например, 6508" value="${esc(A[5]||'')}">
+   <div id="cls7">${is7000()?cls7():''}</div></div>`,
+  check:()=>(A[9]||'').trim()&&(A[10]||'').trim()?true:'Укажите станции отправления и назначения'},
+
+ {t:'О Вас',render:()=>`<div class="card"><h2>О Вас</h2>
+   ${radios(11,'Цель поездки',OPT.c11)}${radios(12,'Как часто пользуетесь услугами железнодорожного транспорта?',OPT.c12)}
+   ${radios(13,'Ваш пол',OPT.c13)}${radios(14,'Ваш возраст',OPT.c14)}</div>`,
+  check:()=>[11,12,13,14].every(c=>A[c])||'Ответьте на все вопросы на этой странице'},
+
+ {t:'Покупка билета',render:()=>`<div class="card"><h2>Покупка билета</h2>${radios(15,'Каким способом Вы оформляли проездной документ (билет)?',OPT.c15)}</div>
+   <div class="card" id="tblock">${tblock()}</div>`,
+  check:()=>{ if(!A[15]) return 'Выберите способ оформления билета'; const b=ticketBlock(); return b?reqRated(b):true; }},
+
+ {t:'Комфорт в вагоне',render:()=>`<div class="card"><h2>Комфорт в вагоне и поездки</h2><p class="hint">Оцените по 5-балльной шкале параметры комфорта подвижного состава.</p>${rateGroup(R_CAR)}</div>`,
+  check:()=>reqRated(R_CAR)},
+
+ {t:'Услуги в пути',render:()=>`<div class="card"><h2>Услуги в пути следования</h2><p class="hint">Оцените качество услуг, которыми Вы пользовались. Если не пользовались — отметьте «${NA}».</p>${rateGroup(R_SERV)}</div>
+   <div class="card"><h2>Представитель перевозчика</h2><p class="hint">Оцените работу представителя перевозчика (разъездного билетного кассира, контролёра).</p>${rateGroup(R_STAFF)}</div>`,
+  check:()=>reqRated([...R_SERV,...R_STAFF])},
+
+ {t:'Поездка и стоимость',render:()=>`<div class="card"><h2>Поездка в целом</h2>${rateGroup(R_TRIP)}</div>
+   <div class="card"><h2>Стоимость поездки</h2>${rateGroup(R_COST)}</div>`,
+  check:()=>reqRated([...R_TRIP,...R_COST])},
+
+ {t:'Обращения',render:()=>`<div class="card"><h2>Обращения</h2>
+   <div class="q" data-q="ap">Оставляли ли Вы когда-либо обращение по вопросу качества услуг в РЖД? <span class="req">*</span></div>
+   <div class="opts"><label class="opt"><input type="radio" name="ap" value="1" ${appealed===true?'checked':''}><span>Да</span></label>
+   <label class="opt"><input type="radio" name="ap" value="0" ${appealed===false?'checked':''}><span>Нет</span></label></div>
+   <div id="apblock">${apblock()}</div></div>`,
+  check:()=>{
+    if(appealed===null) return 'Ответьте, оставляли ли Вы обращение';
+    if(!appealed) return true;
+    const ch=channelsOn(); if(!ch.length) return 'Отметьте, через какие каналы Вы обращались';
+    let r=reqRated(ch); if(r!==true) return r;
+    if(!A[88]) return 'Укажите, с чем было связано обращение';
+    if(A.ch86){ r=reqRated(R_CPK); if(r!==true) return r; if(!A[93]) return 'Укажите, был ли решён Ваш вопрос в ЦПК'; }
+    return true; }},
+
+ {t:'Что для Вас важно',render:()=>`<div class="card"><h2>Что для Вас важно</h2>
+   <p class="hint">Расставьте параметры по важности при выборе железнодорожного транспорта: <b>нажимайте по порядку</b>, начиная с самого важного (1 — наивысший приоритет). Повторное нажатие снимает отметку.</p>
+   <div class="rank-list" id="rank">${rankHtml()}</div>
+   <button type="button" class="linkbtn" id="rankreset">Сбросить порядок</button></div>`,
+  check:()=>rankOrder.length===RANK.length||`Расставьте все параметры (отмечено ${rankOrder.length} из ${RANK.length})`},
+
+ {t:'Итоги',render:()=>`<div class="card"><h2>Итоги</h2>
+   ${radios(104,'Как за прошедший год изменилось качество самого значимого для Вас параметра поездки?',OPT.c104)}
+   <div class="q" data-q="chg">Что необходимо изменить в работе пассажирского комплекса? <span class="req">*</span><div class="hint" style="font-weight:400;margin:2px 0 0">Выберите от 1 до 3 пунктов</div></div>
+   <div class="opts">${CHANGE.map(([c,l])=>`<label class="opt"><input type="checkbox" data-chg="${c}" ${A[c]===1?'checked':''}><span>${esc(l)}</span></label>`).join('')}
+   <label class="opt"><input type="checkbox" data-chg="114" ${A.other_on?'checked':''}><span>Другое</span></label></div>
+   <div id="otherbox" style="margin-top:8px;${A.other_on?'':'display:none'}"><input type="text" data-c="114t" maxlength="300" placeholder="Ваш вариант" value="${esc(A['114t']||'')}"></div>
+   <div class="q" data-q="115">Порекомендуете ли Вы поездку железнодорожным транспортом своим друзьям, коллегам и знакомым? <span class="req">*</span></div>
+   <div class="nps">${[1,2,3,4,5,6,7,8,9,10].map(v=>`<button type="button" data-nps="${v}" class="${A[115]===v?'on':''}">${v}</button>`).join('')}</div>
+   <div class="nps-legend"><span>1 — ни в коем случае</span><span>10 — обязательно порекомендую</span></div>
+   <div class="hp"><label>Не заполняйте <input type="text" id="hp" tabindex="-1" autocomplete="off"></label></div></div>`,
+  check:()=>{
+    if(!A[104]) return 'Ответьте, как изменилось качество';
+    const n=CHANGE.filter(([c])=>A[c]===1).length+(A.other_on?1:0);
+    if(n<1||n>3) return 'Выберите от 1 до 3 пунктов в вопросе «Что необходимо изменить»';
+    if(A.other_on&&!(A['114t']||'').trim()) return 'Впишите свой вариант в поле «Другое»';
+    if(!A[115]) return 'Оцените, порекомендуете ли Вы поездку';
+    return true; }},
+];
+
+function cls7(){return `<div class="row2" style="margin-top:4px"><div><div class="q">Номер вагона</div><input type="text" inputmode="numeric" data-c="6" value="${esc(A[6]||'')}"></div>
+  <div><div class="q">Класс обслуживания</div><div class="opts">${OPT.c7.map(o=>`<label class="opt"><input type="radio" name="c7" value="${o}" ${A[7]===o?'checked':''}><span>${o}</span></label>`).join('')}</div></div></div>`}
+function tblock(){
+  const b=ticketBlock(); const box=document.getElementById('tblock');
+  if(box) box.style.display=b?'':'none';
+  if(!b) return '';
+  const t=b===R_OFFLINE?'Вы оформляли билет в кассе/агентстве. Оцените по 5-балльной шкале параметры оказанной услуги':'Вы оформляли билет на сайте/ в мобильном приложении/ терминале. Оцените по 5-балльной шкале параметры оказанной услуги';
+  return `<h2 style="font-size:17px">${t}</h2>${rateGroup(b)}`;
+}
+function apblock(){
+  if(!appealed) return '';
+  const ch=channelsOn();
+  return `<div class="sub"><div class="q">Через какие каналы Вы обращались? Оцените каждый по 5-балльной шкале <span class="req">*</span></div>
+   <div class="opts">${CHANNELS.map(([c,l])=>`<label class="opt"><input type="checkbox" data-ch="${c}" ${A['ch'+c]?'checked':''}><span>${esc(l)}</span></label>`).join('')}</div>
+   ${ch.length?`<div style="margin-top:10px">${rateGroup(ch)}</div>`:''}
+   ${radios(88,'С чем было связано Ваше обращение?',OPT.c88)}
+   ${A.ch86?`<div class="q">Оцените качество работы ЦПК (Центр поддержки клиентов ОАО «РЖД»)</div>${rateGroup(R_CPK)}${radios(93,'Был ли решён Ваш вопрос?',OPT.c93)}`:''}</div>`;
+}
+function rankHtml(){
+  return RANK.map(([c,l])=>{const i=rankOrder.indexOf(c);return `<div class="rank-item ${i>=0?'on':''}" data-rank="${c}"><span class="n">${i>=0?i+1:''}</span><span>${esc(l)}</span></div>`}).join('');
+}
+function reqRated(items){
+  document.querySelectorAll('.rate.err').forEach(e=>e.classList.remove('err'));
+  const miss=items.filter(([c,,na])=>!(A[c]>=1&&A[c]<=5)&&!(na&&A[c]===NA));
+  miss.forEach(([c])=>{const e=document.querySelector(`[data-rate="${c}"]`); if(e) e.classList.add('err')});
+  if(miss.length){const e=document.querySelector(`[data-rate="${miss[0][0]}"]`); if(e) e.scrollIntoView({behavior:'smooth',block:'center'}); return 'Поставьте оценку в каждой строке (или «'+NA+'», где это есть)';}
+  return true;
+}
+
+/* ===== Рендер и события ===== */
+function render(){
+  const s=STEPS[step];
+  $('#app').innerHTML=s.render()+`<div class="errbox" id="err"></div>`;
+  if(step===3) tblock();
+  $('#bar').style.width=(step/(STEPS.length-1)*100)+'%';
+  $('#stepinfo').textContent=step===0?'':`Шаг ${step} из ${STEPS.length-1} · ${s.t}`;
+  $('#back').style.visibility=step===0?'hidden':'visible';
+  $('#next').textContent=step===0?'Начать':step===STEPS.length-1?'Отправить':'Далее';
+  window.scrollTo(0,0); save();
+}
+document.addEventListener('input',e=>{
+  const c=e.target.dataset.c; if(c){A[c]=e.target.value; if(c==='5'){$('#cls7').innerHTML=is7000()?cls7():''; if(!is7000()){delete A[6];delete A[7];}} save();}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.type==='radio'&&t.name==='ap'){appealed=t.value==='1'; if(!appealed){CHANNELS.forEach(([c])=>{delete A['ch'+c];delete A[c]});R_CPK.forEach(([c])=>delete A[c]);delete A[88];delete A[93];} $('#apblock').innerHTML=apblock(); save(); return;}
+  if(t.type==='radio'&&t.name.startsWith('c')){const col=t.name.slice(1);A[col]=t.value;
+    if(col==='15'){[...R_OFFLINE,...R_ONLINE].forEach(([c])=>delete A[c]); $('#tblock').innerHTML=tblock();}
+    if(col==='88'||col==='93'){} save(); return;}
+  if(t.dataset.ch){const c=t.dataset.ch; A['ch'+c]=t.checked; if(!t.checked) delete A[c];
+    if(c==='86'&&!t.checked){R_CPK.forEach(([x])=>delete A[x]);delete A[93];}
+    const y=window.scrollY; $('#apblock').innerHTML=apblock(); window.scrollTo(0,y); save(); return;}
+  if(t.dataset.chg){const c=t.dataset.chg;
+    const n=CHANGE.filter(([x])=>A[x]===1).length+(A.other_on?1:0);
+    if(t.checked&&n>=3){t.checked=false; $('#err').textContent='Можно выбрать не более 3 пунктов'; return;}
+    if(c==='114'){A.other_on=t.checked; $('#otherbox').style.display=t.checked?'':'none';} else A[c]=t.checked?1:0;
+    $('#err').textContent=''; save();}
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-c]');
+  if(b){const c=b.dataset.c, v=b.dataset.v==='na'?NA:+b.dataset.v; A[c]=v;
+    b.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    b.closest('.rate').classList.remove('err'); save(); return;}
+  const r=e.target.closest('[data-rank]');
+  if(r){const c=+r.dataset.rank; const i=rankOrder.indexOf(c); if(i>=0) rankOrder.splice(i,1); else rankOrder.push(c); $('#rank').innerHTML=rankHtml(); save(); return;}
+  if(e.target.id==='rankreset'){rankOrder=[];$('#rank').innerHTML=rankHtml();save();return;}
+  const n=e.target.closest('[data-nps]');
+  if(n){A[115]=+n.dataset.nps; document.querySelectorAll('[data-nps]').forEach(x=>x.classList.toggle('on',x===n)); save();}
+});
+$('#back').onclick=()=>{if(step>0){step--;render();}};
+$('#next').onclick=async()=>{
+  const ok=STEPS[step].check();
+  if(ok!==true){$('#err').textContent=ok; return;}
+  if(step<STEPS.length-1){step++;render();return;}
+  await submit();
+};
+
+/* ===== Отправка: формируем строку в колонках «Базы оценок» ===== */
+function buildRow(){
+  const row={};
+  const put=(c,v)=>{if(v!==undefined&&v!==null&&v!=='') row[c]=v;};
+  [5,6,7,9,10].forEach(c=>put(c,(A[c]||'').toString().trim()));
+  if(row[5]&&/^\d+$/.test(row[5])) row[5]=+row[5];
+  if(row[6]&&/^\d+$/.test(row[6])) row[6]=+row[6];
+  [11,12,13,14,15].forEach(c=>put(c,A[c]));
+  const b=ticketBlock();
+  const rated=[...(b||[]),...R_CAR,...R_SERV,...R_STAFF,...R_TRIP,...R_COST];
+  if(appealed){rated.push(...channelsOn()); if(A.ch86) rated.push(...R_CPK);}
+  rated.forEach(([c])=>{if(typeof A[c]==='number') row[c]=A[c];});
+  if(appealed){put(88,A[88]); if(A.ch86) put(93,A[93]);}
+  rankOrder.forEach((c,i)=>row[c]=i+1);
+  put(104,A[104]);
+  CHANGE.forEach(([c])=>row[c]=A[c]===1?1:0);
+  row[114]=A.other_on?(A['114t']||'').trim():0;
+  row[115]=A[115];
+  return row;
+}
+async function submit(){
+  const btn=$('#next'); btn.disabled=true; btn.textContent='Отправка…';
+  try{
+    const res=await fetch('api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({row:buildRow(),appealed,hp:($('#hp')||{}).value||'',secs:Math.round((Date.now()-startedAt)/1000)})});
+    if(!res.ok) throw new Error(await res.text());
+    try{localStorage.removeItem(KEY)}catch(e){}
+    $('#nav').style.display='none'; $('#bar').style.width='100%'; $('#stepinfo').textContent='';
+    $('#app').innerHTML=`<div class="card done"><div class="big">✓</div><h2>Благодарим Вас за ответы!</h2><p>Желаем Вам приятных поездок!</p></div>`;
+  }catch(err){
+    btn.disabled=false; btn.textContent='Отправить';
+    $('#err').textContent='Не удалось отправить анкету. Проверьте интернет и попробуйте ещё раз.';
+  }
+}
+render();
+</script>
+</body>
+</html>
